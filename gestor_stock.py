@@ -10,6 +10,7 @@ class GestorStock:
         self._quantidade = max(0, int(quantidade))
         self._preco_medio_compra = self._preco_atual if self._quantidade > 0 else 0.0
         self._lucro_realizado = 0.0
+        self._historico = []
 
     @property
     def simbolo(self) -> str:
@@ -68,6 +69,11 @@ class GestorStock:
         self._preco_medio_compra = (total_atual + total_novo) / nova_quantidade
         self._quantidade = nova_quantidade
         self.preco_atual = preco
+        self._historico.append({
+            "tipo": "compra",  # ou "venda" ou "dividendo"
+            "quantidade": quantidade,
+            "preco": preco,
+        })
         return True
 
     def vender(self, quantidade: int, preco: float) -> bool:
@@ -79,6 +85,11 @@ class GestorStock:
         self._lucro_realizado += margem
         self._quantidade -= quantidade
         self.preco_atual = preco
+        self._historico.append({
+            "tipo": "venda",
+            "quantidade": quantidade,
+            "preco": preco,
+        })
         return True
 
     def valor_total(self) -> float:
@@ -92,4 +103,25 @@ class GestorStock:
             return 0.0
         total = dividendo_por_acao * self._quantidade
         self._lucro_realizado += total
+        self._historico.append({
+            "tipo": "dividendo",
+            "dividendo_por_acao": dividendo_por_acao,
+            "total": total,
+        })
         return total
+    
+    def __str__(self) -> str:
+        sinal = "+" if self.lucro_potencial() >= 0 else ""
+        return (
+            f"[{self._simbolo}] {self._nome}\n"
+            f"  Preco atual:      {self._preco_atual:.2f} €\n"
+            f"  Quantidade:       {self._quantidade} acoes\n"
+            f"  Valor total:      {self.valor_total():.2f} €\n"
+            f"  Preco medio:      {self._preco_medio_compra:.2f} €\n"
+            f"  Lucro potencial:  {sinal}{self.lucro_potencial():.2f} €\n"
+            f"  Lucro realizado:  {self._lucro_realizado:.2f} €"
+        )
+
+    @property
+    def historico(self) -> list:
+        return list(self._historico)
