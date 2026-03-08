@@ -45,19 +45,19 @@ class GestorStock:
 
     @property
     def preco_medio_compra(self) -> float:
-        pass
+        return self._preco_medio_compra
 
     @preco_medio_compra.setter
     def preco_medio_compra(self, valor: float):
-        pass
+        self._preco_medio_compra = float(valor)
 
     @property
     def lucro_realizado(self) -> float:
-        pass
+        return self._lucro_realizado
 
     @lucro_realizado.setter
     def lucro_realizado(self, valor: float):
-        pass
+        self._lucro_realizado = float(valor)
 
     def comprar(self, quantidade: int, preco: float) -> bool:
         pass
@@ -66,10 +66,14 @@ class GestorStock:
         pass
 
     def valor_total(self) -> float:
-        pass
+        return self._quantidade * self._preco_atual
 
     def lucro_potencial(self) -> float:
-        pass
+        return (self._preco_atual - self._preco_medio_compra) * self._quantidade
 
     def receber_dividendo(self, dividendo_por_acao: float) -> float:
-        pass
+        if dividendo_por_acao <= 0:
+            return 0.0
+        total = dividendo_por_acao * self._quantidade
+        self._lucro_realizado += total
+        return total
