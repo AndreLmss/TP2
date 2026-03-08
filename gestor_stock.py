@@ -60,10 +60,26 @@ class GestorStock:
         self._lucro_realizado = float(valor)
 
     def comprar(self, quantidade: int, preco: float) -> bool:
-        pass
+        if quantidade <= 0 or preco <= 0:
+            return False
+        total_atual = self._quantidade * self._preco_medio_compra
+        total_novo = quantidade * preco
+        nova_quantidade = self._quantidade + quantidade
+        self._preco_medio_compra = (total_atual + total_novo) / nova_quantidade
+        self._quantidade = nova_quantidade
+        self.preco_atual = preco
+        return True
 
     def vender(self, quantidade: int, preco: float) -> bool:
-        pass
+        if quantidade <= 0 or preco <= 0:
+            return False
+        if quantidade > self._quantidade:
+            return False
+        margem = (preco - self._preco_medio_compra) * quantidade
+        self._lucro_realizado += margem
+        self._quantidade -= quantidade
+        self.preco_atual = preco
+        return True
 
     def valor_total(self) -> float:
         return self._quantidade * self._preco_atual
